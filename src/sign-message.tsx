@@ -1,25 +1,25 @@
-import { BrowserWallet, bytesToHex, encodeText, type Hex } from "js-moi-sdk";
-import type { FC } from "react";
-import { provider } from "./provider";
+import { bytesToHex, encodeText } from "js-moi-sdk";
+import { useParticipant } from "./wallet-extension-hooks";
 
-interface SignMessageProps {
-    account: Hex;
-}
+export const SignMessage = () => {
+    const { signer } = useParticipant();
 
-export const SignMessage: FC<SignMessageProps> = (props) => {
     const handleOnSignMessage = async () => {
+        if (signer == null) {
+            alert("No signer found");
+            return;
+        }
+
         const message = prompt("Enter message to sign");
 
         if (message == null) {
             return;
         }
-        const { account } = props;
         const hexEncodedMessage = bytesToHex(encodeText(message));
-        const wallet = new BrowserWallet(account, { provider });
 
-        const signature = await wallet.sign(
+        const signature = await signer.sign(
             hexEncodedMessage,
-            wallet.signingAlgorithms.ecdsa_secp256k1
+            signer.signingAlgorithms.ecdsa_secp256k1
         );
 
         alert(`Signature: ${signature}`);

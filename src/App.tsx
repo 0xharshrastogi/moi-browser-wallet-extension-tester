@@ -8,12 +8,11 @@ import { WalletPublicKey } from "./wallet-public-key";
 import { WalletVersion } from "./WalletVersion";
 
 function App() {
-    const { participant, loading } = useParticipant();
+    const { participant } = useParticipant();
+    console.log("Participant in app:", participant);
     const network = useNetwork();
 
-    if (loading) {
-        return <span>Loading...</span>;
-    }
+    console.log("Participant:", participant);
 
     return (
         <>

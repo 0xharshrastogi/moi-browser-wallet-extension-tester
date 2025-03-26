@@ -55,9 +55,14 @@ export const useParticipant = () => {
     }, []);
 
     const signer = useMemo(
-        () => (participant == null ? null : new BrowserWallet(participant)),
+        () =>
+            participant == null
+                ? null
+                : new BrowserWallet(participant, { provider }),
         [participant]
     );
+
+    console.log("useParticipant", participant);
 
     return { loading, participant, requestPermission, signer };
 };
