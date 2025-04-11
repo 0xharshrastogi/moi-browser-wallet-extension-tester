@@ -1,12 +1,6 @@
-import {
-    AssetStandard,
-    BrowserWallet,
-    OpType,
-    type Hex,
-    type IxOperation,
-} from "js-moi-sdk";
+import { AssetStandard, OpType, type Hex, type IxOperation } from "js-moi-sdk";
 import type { FC } from "react";
-import { provider } from "./provider";
+import { useParticipant } from "./wallet-extension-hooks";
 
 interface SignInteractionProps {
     account: Hex;
@@ -14,9 +8,15 @@ interface SignInteractionProps {
 }
 
 export const SignOrSendInteraction: FC<SignInteractionProps> = (props) => {
-    const { account, type } = props;
+    const { signer } = useParticipant();
+    const { type } = props;
+
     const handleOnSignInteraction = async () => {
-        const wallet = new BrowserWallet(account, { provider });
+        if (signer == null) {
+            alert("No signer found");
+            return;
+        }
+
         const operation: IxOperation<OpType.AssetCreate> = {
             type: OpType.AssetCreate,
             payload: {
@@ -26,12 +26,12 @@ export const SignOrSendInteraction: FC<SignInteractionProps> = (props) => {
             },
         };
 
-        const request = await wallet.createIxRequest("moi.Execute", operation);
+        const request = await signer.createIxRequest("moi.Execute", operation);
 
         if (type === "sign") {
-            const signedInteractionRequest = await wallet.signInteraction(
+            const signedInteractionRequest = await signer.signInteraction(
                 request,
-                wallet.signingAlgorithms.ecdsa_secp256k1
+                signer.signingAlgorithms.ecdsa_secp256k1
             );
 
             alert(
@@ -42,7 +42,7 @@ export const SignOrSendInteraction: FC<SignInteractionProps> = (props) => {
             return;
         }
 
-        const ix = await wallet.execute(operation);
+        const ix = await signer.execute(operation);
         const result = ix.result();
         alert(`Interaction Hash: ${ix.hash}`);
         alert(`Interaction Result: ${JSON.stringify(await result)}`);

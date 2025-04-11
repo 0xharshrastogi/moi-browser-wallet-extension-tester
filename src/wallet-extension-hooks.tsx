@@ -62,8 +62,6 @@ export const useParticipant = () => {
         [participant]
     );
 
-    console.log("useParticipant", participant);
-
     return { loading, participant, requestPermission, signer };
 };
 

@@ -1,5 +1,7 @@
+import { ActiveAccount } from "./active-accounts";
 import { NetworkConfig } from "./network-config";
 import { NetworkVersion } from "./NetworkVersion";
+import { NodeInfo } from "./NodeInfo";
 import { RequestPermission } from "./RequestPermission";
 import { SignOrSendInteraction } from "./sign-interaction";
 import { SignMessage } from "./sign-message";
@@ -9,10 +11,7 @@ import { WalletVersion } from "./WalletVersion";
 
 function App() {
     const { participant } = useParticipant();
-    console.log("Participant in app:", participant);
     const network = useNetwork();
-
-    console.log("Participant:", participant);
 
     return (
         <>
@@ -37,9 +36,7 @@ function App() {
                     <WalletVersion />
                     <RequestPermission />
                     <NetworkVersion />
-                    {participant != null && (
-                        <SignMessage account={participant} />
-                    )}
+                    {participant != null && <SignMessage />}
                     {participant != null && (
                         <>
                             <SignOrSendInteraction
@@ -55,7 +52,11 @@ function App() {
                     )}
                     <WalletPublicKey />
 
+                    <ActiveAccount />
+
                     <NetworkConfig />
+
+                    <NodeInfo />
                 </div>
             </span>
         </>
